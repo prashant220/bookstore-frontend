@@ -1,4 +1,4 @@
-import { products,new_books } from './api.js';
+import { products,new_books,categories } from './api.js';
 
 const bar = document.getElementById('bar');
 const close = document.getElementById('close');
@@ -494,138 +494,17 @@ function getCartItemCount() {
 }
 
 
-function updateCartCount() {
-    const cartCount = getCartItemCount();
-    const cartCountElement = document.getElementById('cart-count');
-    const mobileCartCountElement = document.getElementById('mobile-cart-count');
-    
-    if (cartCountElement) {
-        cartCountElement.textContent = cartCount;
-    }
-    if (mobileCartCountElement) {
-        mobileCartCountElement.textContent = cartCount;
-    }
-}
-
-window.onload = updateCartCount;     
 
 
-import { products,categories } from '../js/api.js';
-import { new_books } from '../js/api.js';
 
 
-document.addEventListener('DOMContentLoaded', () => {
-    populateProducts();
-    populateNew();
-
-});
-
-function populateProducts() {
-    const container = document.getElementById('pro-container');
-
-    for (const key in products) {
-        if (products.hasOwnProperty(key)) {
-            const product = products[key];
-
-            const productElement = document.createElement('div');
-            productElement.classList.add('pro');
-            productElement.id = key;
-
-            productElement.innerHTML = `
-                <a href="sproduct.html?id=${key}">
-                    <img src="${product.image}" alt="${product.title}">
-                    <div class="des">
-                        <span>${product.brand}</span>
-                        <h5>${product.title}</h5>
-                        <div class="star">${generateStars(product.stars)}</div>
-                        <h4>${product.price}</h4>
-                    </div>
-                    <i class="fa-solid fa-cart-shopping cart"></i>
-                </a>
-            `;
-
-            container.appendChild(productElement);
-        }
-    }
-}
-function populateNew() {
-    const container = document.getElementById('pro-new');
-
-    for (const key in new_books) {
-        if (new_books.hasOwnProperty(key)) {
-            const product = new_books[key];
-
-            const productElement = document.createElement('div');
-            productElement.classList.add('pro');
-            productElement.id = key;
-console.log("pp",product)
-            productElement.innerHTML = `
-                <a href="sproduct.html?id=${key}">
-                    <img src="${product.image}" alt="${product.title}">
-                    <div class="des">
-                        <span>${product.brand}</span>
-                        <h5>${product.title}</h5>
-                        <div class="star">${generateStars(product.stars)}</div>
-                        <h4>${product.price}</h4>
-                    </div>
-                    <i class="fa-solid fa-cart-shopping cart"></i>
-                </a>
-            `;
-
-            container.appendChild(productElement);
-        }
-    }
-}
-
-function generateStars(starCount) {
-    let stars = '';
-    for (let i = 0; i < starCount; i++) {
-        stars += '<i class="fa-solid fa-star" style="color: #FFD43B;"></i>';
-    }
-    return stars;
-}
-
-const featureSection = document.getElementById('feature');
-
-// inserting category 
-categories.forEach(category => {
-const card = document.createElement('div');
-card.className = 'card';
-card.dataset.category = category.name.toLowerCase();
-
-const img = document.createElement('img');
-img.src = category.imgSrc;
-img.alt = category.name;
-
-const h6 = document.createElement('h6');
-h6.textContent = category.name;
-
-card.appendChild(img);
-card.appendChild(h6);
-
-featureSection.appendChild(card);
-});
 
 
-document.querySelectorAll('.card').forEach(function(card) {
-    card.addEventListener('click', function() {
-        var category = this.getAttribute('data-category');
-        window.location.href = 'category.html?category=' + category;
-    });
-});
 
 
-function getQueryParam(param) {
-    var urlParams = new URLSearchParams(window.location.search);
-    return urlParams.get(param);
-}
 
 
-window.onload = function() {
-    var category = getQueryParam('category');
-    if (category) {
-        console.log('Category:', category);
-    }
-};
+
+
 
 
