@@ -150,15 +150,7 @@
             return stars;
         }
 
-        // On page load, check if category is present in URL and update the h2 element
-        window.onload = function() {
-            const category = getQueryParam('category');
-            if (category) {
-                const h2Element = document.querySelector('h2');
-                h2Element.textContent = `Category: ${category.charAt(0).toUpperCase() + category.slice(1)}`;
-                displayProducts(category.toLowerCase());
-            }
-        };
+     
       
         function getCartItemCount() {
     
@@ -177,8 +169,15 @@ function updateCartCount() {
 }
 
 window.onload = function() {
-    updateCartCount();
-};
+            updateCartCount();
+            
+            const category = getQueryParam('category');
+            if (category) {
+                const h2Element = document.querySelector('h2');
+                h2Element.textContent = `Category: ${category.charAt(0).toUpperCase() + category.slice(1)}`;
+                displayProducts(category.toLowerCase());
+            }
+        };
  
     </script>
     <script type="module" src="../js/script.js" defer></script>

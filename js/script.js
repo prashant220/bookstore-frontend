@@ -431,80 +431,129 @@ enter_coupon.classList.add('hide');
 
 var total=0;
 
-if(totalBtn){
-    totalBtn.addEventListener("click", ()=>{
-        
 
-        let a= num1.value;
-        let b= num2.value;
-        let c= num3.value;
-        if(first.classList.contains('hide'))
-            a=0;
-         
-        if(sec.classList.contains('hide'))
-         b=0;
-        if(third.classList.contains('hide'))
-         c=0;
-        
-        let price1 =Number((first_price.innerText).slice(2,));
-        let price2 = Number((sec_price.innerText).slice(2,));
-        let price3 = Number((third_price.innerText).slice(2,));
-        console.log(price1, price2, price3); 
+//cart
 
-         total = (a*price1+ b*price2 + c*price3).toFixed(2);
-        console.log(total);
-        console.log(a , b , c);
-        insert.classList.add("cart-total");
-        insert.classList.remove('hide');
-        insert.innerHTML= `<div >
-                <h2>Cart Total</h2>
-                <table>
-                     <tr>
-                        <td>Quantity</td>
-                        <td> ${Number(a)+Number(b)+Number(c)}</td>
-                     </tr> 
 
-                     <tr>
-                        <td>Amount</td>
-                        <td>$ ${total}</td>
-                     </tr>
-                     <tr >
-                         <td>Shipping</td>
-                         <td>Free</td>
-                     </tr>
-                     <tr>
-                         <td  style="color:black;" ><b>Total</b></td>
-                         <td  style="font-weight: 500; color:black;">$ ${total}</td>
-                     </tr>
-                </table>
-               <a href="payment.html" target="_blank">   <button id="Proceed" >Proceed to Pay</button> 
-              </a>      <br> <br> <br>
-               <span id="redId"  class="hide" style="color: red;"> Add Some items before Proceed</span>  
-            </div>`;
-    
-          
-    })
+document.addEventListener('DOMContentLoaded', () => {
+    populateCart();
+    updateCartCount();
+});
+
+function populateCart() {
+    const cartItemsContainer = document.getElementById('cart-items');
+    const cart = JSON.parse(localStorage.getItem('cart')) || [];
+    cartItemsContainer.innerHTML = ''; // Clear any existing items
+
+    cart.forEach(item => {
+        const itemPrice = parseFloat(item.price.replace('$', ''));
+        const row = document.createElement('tr');
+        row.id = item.id;
+
+        row.innerHTML = `
+            <td><i class="fa-solid fa-trash remove-btn" data-id="${item.id}"></i></td>
+            <td><img src="${item.image}" alt="${item.title}"></td>
+            <td>${item.title}</td>
+            <td>$${itemPrice.toFixed(2)}</td>
+            <td><input type="number" min="1" value="${item.quantity}" data-id="${item.id}"></td>
+        `;
+
+        cartItemsContainer.appendChild(row);
+    });
+
+    addEventListeners(); // Add event listeners for remove and quantity changes
 }
-//update cart count
+
+function addEventListeners() {
+    document.querySelectorAll('.remove-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            const productId = e.target.dataset.id;
+            removeFromCart(productId);
+        });
+    });
+
+    document.querySelectorAll('input[type="number"]').forEach(input => {
+        input.addEventListener('change', (e) => {
+            const productId = e.target.dataset.id;
+            const newQuantity = parseInt(e.target.value, 10);
+            updateCartQuantity(productId, newQuantity);
+        });
+    });
+}
+
+function removeFromCart(productId) {
+    let cart = JSON.parse(localStorage.getItem('cart')) || [];
+    cart = cart.filter(item => item.id !== productId);
+    localStorage.setItem('cart', JSON.stringify(cart));
+    populateCart(); // Refresh the cart display
+}
+
+function updateCartQuantity(productId, newQuantity) {
+    let cart = JSON.parse(localStorage.getItem('cart')) || [];
+    cart = cart.map(item => {
+        if (item.id === productId) {
+            item.quantity = newQuantity;
+        }
+        return item;
+    });
+    localStorage.setItem('cart', JSON.stringify(cart));
+}
+
+function calculateTotal() {
+    const cart = JSON.parse(localStorage.getItem('cart')) || [];
+    let totalQuantity = 0;
+    let totalAmount = 0;
+
+    cart.forEach(item => {
+        const itemPrice = parseFloat(item.price.replace('$', ''));
+        totalQuantity += item.quantity;
+        totalAmount += itemPrice * item.quantity;
+    });
+
+    const insert = document.getElementById('insert');
+    insert.classList.remove('hide');
+    insert.innerHTML = `
+        <div>
+            <h2>Cart Total</h2>
+            <table>
+                <tr>
+                    <td>Quantity</td>
+                    <td>${totalQuantity}</td>
+                </tr> 
+                <tr>
+                    <td>Amount</td>
+                    <td>$${totalAmount.toFixed(2)}</td>
+                </tr>
+                <tr>
+                    <td>Shipping</td>
+                    <td>Free</td>
+                </tr>
+                <tr>
+                    <td style="color:black;"><b>Total</b></td>
+                    <td style="font-weight: 500; color:black;">$${totalAmount.toFixed(2)}</td>
+                </tr>
+            </table>
+            <a href="payment.html" target="_blank">
+                <button id="Proceed">Proceed to Pay</button>
+            </a>
+            <br><br><br>
+            <span id="redId" class="hide" style="color: red;">Add some items before proceeding</span>  
+        </div>`;
+}
+
+if (totalBtn) {
+    totalBtn.addEventListener('click', () => {
+        calculateTotal();
+    });
+}
+
 function getCartItemCount() {
-    
     const cartItems = JSON.parse(localStorage.getItem('cart')) || [];
     return cartItems.length;
-    
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+function updateCartCount() {
+    const cartCount = getCartItemCount();
+    document.getElementById('cart-count').textContent = cartCount;
+    document.getElementById('mobile-cart-count').textContent = cartCount;
+}
