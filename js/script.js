@@ -139,40 +139,42 @@ const select_size = document.getElementById("select-size");
 if (cart_btn) {
     cart_btn.addEventListener("click", () => {
         // Check selected option
-       
-            // Get the current product ID from the URL query parameters
-            const urlParams = new URLSearchParams(window.location.search);
-            const productId = urlParams.get('id');
 
-            // Find the product in the products object
-            const product =  products[productId] || new_books[productId];
-             console.log("pp",product)
-            if (product) {
-                // Get existing cart items from local storage
-                let cart = JSON.parse(localStorage.getItem('cart')) || [];
-                
-                // Check if the product already exists in the cart
-                let existingProduct = cart.find(item => item.id === product.id);
-                if (existingProduct) {
-                    // If product already exists, increase the quantity
-                    existingProduct.quantity += 1;
-                } else {
-                    // If product does not exist, add to cart with quantity 1
-                    cart.push({ ...product, quantity: 1 });
-                }
-                
-                // Save the updated cart back to local storage
-                localStorage.setItem('cart', JSON.stringify(cart));
-                
-                console.log('Product added to cart:', product);
-                
-               
+        // Get the current product ID from the URL query parameters
+        const urlParams = new URLSearchParams(window.location.search);
+        const productId = urlParams.get('id');
+
+        // Find the product in the products object
+        const product = products[productId] || new_books[productId];
+        console.log("pp", product)
+        if (product) {
+            // Get existing cart items from local storage
+            let cart = JSON.parse(localStorage.getItem('cart')) || [];
+
+            // Check if the product already exists in the cart
+            let existingProduct = cart.find(item => item.id === product.id);
+            if (existingProduct) {
+                // If product already exists, increase the quantity
+                existingProduct.quantity += 1;
             } else {
-                console.log('Product not found');
+                // If product does not exist, add to cart with quantity 1
+                cart.push({ ...product, quantity: 1 });
             }
-        
+
+            // Save the updated cart back to local storage
+            localStorage.setItem('cart', JSON.stringify(cart));
+
+            console.log('Product added to cart:', product);
+
+            // Display an alert and reload the page
+            alert('Product added to cart');
+            location.reload();
+        } else {
+            console.log('Product not found');
+        }
     });
 }
+
 
 // buy btn 
 
@@ -509,8 +511,10 @@ function calculateTotal() {
         totalQuantity += item.quantity;
         totalAmount += itemPrice * item.quantity;
     });
-
+     
     const insert = document.getElementById('insert');
+    insert.classList.add("cart-total")
+    console.log(insert)
     insert.classList.remove('hide');
     insert.innerHTML = `
         <div>
